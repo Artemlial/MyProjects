@@ -47,6 +47,7 @@ func lookup(fqdn string) []result {
 	for {
 		cname, err := lookupCNAME(cfqdn)
 		if err == nil {
+			// fmt.Println(cname) //thats just my guess on where the issue is
 			cfqdn = cname
 			continue
 		}
