@@ -30,37 +30,17 @@ func lookupA(fqdn string) ([]string, error) {
 	return ips, nil
 }
 
-func lookupCNAME(fqdn string) (string, error) {
-	in, err := net.LookupCNAME(fqdn)
-	if err != nil {
-		return "", err
-	}
-	if in == "" {
-		return in, errors.New("no CNAME")
-	}
-	return in, nil
-}
-
 func lookup(fqdn string) []result {
 	var results []result
 	var cfqdn = fqdn
-	for {
-		cname, err := lookupCNAME(cfqdn)
-		if err == nil {
-			// fmt.Println(cname) //thats just my guess on where the issue is
-			cfqdn = cname
-			continue
-		}
-		ips, err := lookupA(cfqdn)
-		if err != nil {
-			break
-		}
-		results = append(results, result{
-			IP:       ips,
-			Hostname: cfqdn,
-		})
-		break
+	ips, err := lookupA(cfqdn)
+	if err != nil {
+		return results
 	}
+	results = append(results, result{
+		IP:       ips,
+		Hostname: cfqdn,
+	})
 	return results
 }
 
@@ -82,14 +62,14 @@ func main() {
 		flDomain      = flag.String("domain", "", "The domain to perform guessing against.")
 		flWordlist    = flag.String("wordlist", "", "The wordlist to use for guessing.")
 		flWorkerCount = flag.Int("c", 100, "The amount of workers to use.")
-		// flServerAddr = flag.String("server", "8.8.8.8:53", "The DNS server to use.")
+		flServerAddr  = flag.String("server", "8.8.8.8:53", "The DNS server to use.")
 	)
 	flag.Parse()
 	if *flDomain == "" || *flWordlist == "" {
 		fmt.Println("-domain and -wordlist are required")
 		os.Exit(1)
 	}
-	fmt.Println(*flWorkerCount)
+	fmt.Println(*flWorkerCount, *flServerAddr)
 	var results []result
 	fqdns := make(chan string, *flWorkerCount)
 	gather := make(chan []result)
@@ -100,15 +80,14 @@ func main() {
 	}
 	defer fh.Close()
 	scanner := bufio.NewScanner(fh)
-
 	// r := &net.Resolver{
-	//     PreferGo: true,
-	//     Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
-	//         d := net.Dialer{
-	//             Timeout: time.Millisecond * time.Duration(10000),
-	//         }
-	//         return d.DialContext(ctx, network, *flServerAddr)
-	//     },
+	// 	PreferGo: true,
+	// 	Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+	// 		d := net.Dialer{
+	// 			Timeout: time.Millisecond * time.Duration(10000),
+	// 		}
+	// 		return d.DialContext(ctx, network, *flServerAddr)
+	// 	},
 	// }
 	for i := 0; i < *flWorkerCount; i++ {
 		go worker(tracker, fqdns, gather)
