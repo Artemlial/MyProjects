@@ -1,8 +1,7 @@
 *
 
-!*.go
-!go.mod
-!go.sum
-!*.js
-!*.html
-!**/.gitignore
+!**/*.*
+!*/
+**/logs
+**/conf
+**/*.txt
