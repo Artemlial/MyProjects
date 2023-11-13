@@ -22,5 +22,6 @@ go.work
 
 */MySandbox
 **/logs/
-**/conf.*
-**/main[!.go]
+**/conf
+**/main
+!*.go
