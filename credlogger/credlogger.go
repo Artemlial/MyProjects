@@ -10,8 +10,10 @@ import (
 
 func login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		log.Printf("time::%s\n\tusername::%s\n\tpassword::%s\n\tuser-agent::%s\n\tip_address::%s\n}", time.Now().String(), r.FormValue("_user"), r.FormValue("_pass"), r.UserAgent(), r.RemoteAddr)
-	}else{http.Redirect(w, r, "/", 302)}
+		log.Printf("{\n\ttime::%s\n\tusername::%s\n\tpassword::%s\n\tuser-agent::%s\n\tip_address::%s\n}", time.Now().String(), r.FormValue("_user"), r.FormValue("_pass"), r.UserAgent(), r.RemoteAddr)
+	} else {
+		http.Redirect(w, r, "/", 302)
+	}
 }
 
 func main() {
@@ -21,8 +23,7 @@ func main() {
 	}
 	defer fh.Close()
 	log.SetOutput(fh)
-	log.SetPrefix("login attempt {\n\t")
-	log.SetFlags(0)
+	log.SetPrefix("login attempt:")
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(http.Dir("public")))
 	mux.HandleFunc("/login", login)

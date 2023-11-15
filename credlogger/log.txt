@@ -1,7 +1,0 @@
-login attempt {
-	time::2023-10-26 18:19:01.954474081 +0300 MSK m=+22.097936636
-	username::Richard
-	password::Muffat
-	user-agent::Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36
-	ip_address::127.0.0.1:40434
-}

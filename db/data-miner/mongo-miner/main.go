@@ -25,7 +25,7 @@ func New(host string) (*MongoMiner, error) {
 	m := MongoMiner{Host: host}
 	err := m.connect()
 	if err != nil {
-		log.Println("Func New: connecrtion error")
+		log.Println("Func New: connection error")
 		return nil, err
 	}
 	return &m, nil
